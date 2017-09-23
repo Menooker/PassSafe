@@ -3,6 +3,8 @@ package com.passsafe.passsafe;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -39,6 +41,8 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
+    public static String mName="";
+    public static String mPass="";
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -49,7 +53,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * TODO: remove after connecting to a real authentication system.
      */
     private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
+            "bar@example.com:world", "bar@example.com:world"
     };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -92,6 +96,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+        Button buttest=(Button)findViewById(R.id.but_test_login);
+        buttest.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, FaceActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        SharedPreferences pref = getSharedPreferences("Login",MODE_PRIVATE);
+        mName = pref.getString("name","");
+        mPass = pref.getString("pass","");
+        if(!mName.equals("") && !mPass.equals(""))
+        {
+            Intent intent = new Intent(LoginActivity.this, FaceActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
     }
 
     private void populateAutoComplete() {
@@ -192,12 +215,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
-        return email.contains("@");
+        return true;
     }
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return true;
     }
 
     /**
@@ -333,7 +356,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
 
             if (success) {
+                SharedPreferences.Editor editor = getSharedPreferences("Login",MODE_PRIVATE).edit();
+                editor.putString("name",mEmail);
+                editor.putString("pass",mPassword);
+                editor.commit();
+                mName=mEmail;
+                mPass=mPassword;
 
+                Intent intent = new Intent(LoginActivity.this, FaceActivity.class);
+                startActivity(intent);
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
