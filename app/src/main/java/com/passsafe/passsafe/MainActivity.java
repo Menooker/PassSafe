@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     ViewPager mainPager;
     BottomNavigationView navigation;
-
+    public FragmentMain fragmentMain;
     public class MyPagerAdapter extends FragmentPagerAdapter {
         private List<Fragment> viewList;
 
@@ -78,7 +78,8 @@ public class MainActivity extends AppCompatActivity {
         mainPager = (ViewPager) findViewById(R.id.viewpager);
         LayoutInflater inflater = getLayoutInflater();
         ArrayList<Fragment> viewList = new ArrayList<Fragment>();
-        viewList.add(new FragmentMain());
+        fragmentMain=new FragmentMain();
+        viewList.add(fragmentMain);
         viewList.add(new FragmentAdd());
         viewList.add(new FragmentSetting());
         MyPagerAdapter myPagerAdapter = new MyPagerAdapter(viewList);
@@ -106,5 +107,9 @@ public class MainActivity extends AppCompatActivity {
         navigation.getMenu().getItem(1).setChecked(true);
         mainPager.setCurrentItem(1);
     }
-
+    public void SwitchToMain()
+    {
+        navigation.getMenu().getItem(0).setChecked(true);
+        mainPager.setCurrentItem(0);
+    }
 }

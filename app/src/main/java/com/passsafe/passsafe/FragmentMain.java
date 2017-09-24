@@ -1,7 +1,9 @@
 package com.passsafe.passsafe;
 
+import android.content.ClipboardManager;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -14,6 +16,7 @@ import android.support.v4.app.Fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,8 +110,8 @@ public class FragmentMain extends Fragment {
             TextView tname = (TextView) view.findViewById(R.id.txt_name);
             TextView tpass = (TextView) view.findViewById(R.id.txt_pass);
             TextView tsite = (TextView) view.findViewById(R.id.txt_site);
-            tname.setText(data.name);
-            tpass.setText(data.pass);
+            tname.setText("User Name: "+data.name);
+            //tpass.setText(data.pass);
             tsite.setText(data.site);
             return view;
         }
@@ -145,14 +149,62 @@ public class FragmentMain extends Fragment {
         listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                int id=data_list.get(i).id;
-                del(id);
-                refresh();
+                DeleteMessageBox("Are you sure to delete this item?",i);
                 return false;
+            }
+        });
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            long timestamp=0;
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                TextView tpass = (TextView) view.findViewById(R.id.txt_pass);
+                if(tpass.getText().equals(""))
+                    tpass.setText(data_list.get(i).pass);
+                else
+                    tpass.setText("");
+                long currenttime=System.currentTimeMillis();
+                if(currenttime-timestamp<300)
+                {
+                    Toast.makeText(getActivity().getApplicationContext(), "Password has been copied to clipboard!",
+                            Toast.LENGTH_SHORT).show();
+                    ClipboardManager cmb = (ClipboardManager)getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                    cmb.setText(data_list.get(i).pass.trim());
+
+                }
+                timestamp=currenttime;
             }
         });
 
         return view;
+    }
+
+
+
+    void DeleteMessageBox(String prompt,int idx)
+    {
+        final int i=idx;
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case DialogInterface.BUTTON_POSITIVE:
+                        //Yes button clicked
+                        int id = data_list.get(i).id;
+                        del(id);
+                        refresh();
+                        break;
+
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        //No button clicked
+                        break;
+                }
+            }
+        };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage(prompt).setPositiveButton("Yes", dialogClickListener)
+                .setNegativeButton("No", dialogClickListener).show();
     }
 
     public class MyDatabaseHelper extends SQLiteOpenHelper {
