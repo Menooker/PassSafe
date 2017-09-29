@@ -55,6 +55,19 @@ public class FragmentMain extends Fragment {
         return lst;
     }
 
+    boolean exists(String _site,String _name,String _pass)
+    {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        Cursor cursor = db.query("password",null,"name=? and pass=? and site=?",new String[]{_name,_pass,_site},null,null,null,null);
+        boolean ret=false;
+        if (cursor.getCount() > 0)
+        {
+            ret=true;
+        }
+        cursor.close();
+        return ret;
+    }
+
     void del(int id)
     {
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -62,6 +75,8 @@ public class FragmentMain extends Fragment {
     }
     void insert(String site, String name,String pass)
     {
+        if(exists(site,name,pass))
+            return;
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("name",name);

@@ -3,6 +3,8 @@ package com.passsafe.passsafe;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -21,6 +23,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,10 +34,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
+import android.util.JsonReader;
+import android.widget.Toast;
+
+import org.json.JSONObject;
 
 /**
  * A login screen that offers login via email/password.
@@ -65,6 +73,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+
+    void toast(final String str,final int len)
+    {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(getApplicationContext(), str,
+                        len).show();
+            }
+        });
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,8 +118,38 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         buttest.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, FaceActivity.class);
-                startActivity(intent);
+                final String _name=mEmailView.getText().toString();
+                final String _pass=mPasswordView.getText().toString();
+                final AsyncTask<Void, Void, Boolean> task=new AsyncTask<Void, Void, Boolean>() {
+                    @Override
+                    protected Boolean doInBackground(Void... voids) {
+                        String ret=Client.sendGet(Client.URL+"signup/?username="+
+                                Client.encode(_name) + "&password="+ Client.encode(_pass));
+                        try {
+                            JSONObject obj = new JSONObject(ret);
+                            if(obj.has("success") && obj.getInt("success")==1 )
+                            {
+                                    toast("Sign up OK!",Toast.LENGTH_SHORT);
+                            }
+                            else if(obj.has("error_message") )
+                            {
+                                toast("Fail to sign up! " + obj.get("error_message"),Toast.LENGTH_LONG);
+
+                            }
+                            else
+                            {
+                                toast("Fail to sign up! Reason unknown.",Toast.LENGTH_LONG);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            toast("Fail to sign up! Reason unknown.",Toast.LENGTH_LONG);
+                        }
+                        return null;
+                    }
+                };
+                task.execute();
+
             }
         });
 
@@ -331,21 +379,28 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
+            String ret=Client.sendGet(Client.URL+"login/?username="+
+                    Client.encode(mEmail) + "&password="+ Client.encode(mPassword));
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
+                JSONObject obj = new JSONObject(ret);
+                if(obj.has("success") && obj.getInt("success")==1 )
+                {
+                    return true;
+                }
+                else if(obj.has("error_message") )
+                {
+                    toast("Fail to sign in! " + obj.get("error_message"),Toast.LENGTH_LONG);
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
+                }
+                else
+                {
+                    toast("Fail to sign in! Reason unknown.",Toast.LENGTH_LONG);
                 }
             }
-
+            catch (Exception e)
+            {
+                toast("Fail to sign in! Reason unknown.",Toast.LENGTH_LONG);
+            }
             // TODO: register the new account here.
             return false;
         }
