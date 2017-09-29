@@ -51,6 +51,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     public static String mName="";
     public static String mPass="";
+    public static String mJSON=null;
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -369,7 +370,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mEmail;
         private final String mPassword;
-
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
@@ -385,6 +385,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 JSONObject obj = new JSONObject(ret);
                 if(obj.has("success") && obj.getInt("success")==1 )
                 {
+                    mJSON=ret;
                     return true;
                 }
                 else if(obj.has("error_message") )

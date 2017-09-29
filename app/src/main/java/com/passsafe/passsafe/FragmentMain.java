@@ -27,6 +27,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +59,29 @@ public class FragmentMain extends Fragment {
         return lst;
     }
 
+    void batchupdate(String json)
+    {
+        drop();
+        try {
+            JSONArray retobj=new JSONObject(json).getJSONArray("accounts");
+            for(int i=0;i< retobj.length();i++)
+            {
+                JSONObject obj=(JSONObject)retobj.get(i);
+                insert( obj.optString("title"),
+                        obj.optString("username"),
+                        obj.optString("password"));
+            }
+            refresh();
+        } catch (JSONException e) {
+            Client.ShowError(e);
+        }
+    }
+
+    void drop()
+    {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        db.delete("password",null,null);
+    }
     boolean exists(String _site,String _name,String _pass)
     {
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -113,14 +140,12 @@ public class FragmentMain extends Fragment {
         public MyItemAdapter(Context context, int textViewResourceId,
                             List<ItemData> objects) {
             super(context, textViewResourceId, objects);
-            //拿取到子项布局ID
             resourceId = textViewResourceId;
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ItemData data = getItem(position);
-            //为子项动态加载布局
             View view = LayoutInflater.from(getContext()).inflate(resourceId, null);
             TextView tname = (TextView) view.findViewById(R.id.txt_name);
             TextView tpass = (TextView) view.findViewById(R.id.txt_pass);
@@ -190,7 +215,8 @@ public class FragmentMain extends Fragment {
                 timestamp=currenttime;
             }
         });
-
+        if(LoginActivity.mJSON!=null)
+            batchupdate(LoginActivity.mJSON);
         return view;
     }
 

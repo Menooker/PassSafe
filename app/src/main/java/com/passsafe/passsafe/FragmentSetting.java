@@ -1,5 +1,6 @@
 package com.passsafe.passsafe;
 
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 
 /**
@@ -16,10 +17,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 import static android.content.Context.MODE_PRIVATE;
 
 public class FragmentSetting extends Fragment {
+
+
+    void toast(final String str,final int len)
+    {
+        getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(getActivity().getApplicationContext(), str,
+                        len).show();
+            }
+        });
+    }
 
     @Nullable
     @Override
@@ -34,8 +51,80 @@ public class FragmentSetting extends Fragment {
                 editor.putString("name","");
                 editor.putString("pass","");
                 editor.commit();
+                MainActivity main=(MainActivity)getActivity();
+                main.fragmentMain.drop();
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        Button butpull=(Button)view.findViewById(R.id.but_pull);
+        butpull.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AsyncTask<Void,Void,Boolean> task=new AsyncTask<Void, Void, Boolean>() {
+                    @Override
+                    protected Boolean doInBackground(Void... voids) {
+                        String response= Client.sendGet(Client.URL+"accounts/?username=" +
+                                Client.encode(LoginActivity.mName));
+                        MainActivity main=(MainActivity)getActivity();
+                        if(response!=null)
+                            main.fragmentMain.batchupdate(response);
+
+                        return null;
+                    }
+                };
+                task.execute();
+            }
+        });
+
+
+        Button butpush = (Button) view.findViewById(R.id.but_push);
+        butpush.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MainActivity main=(MainActivity)getActivity();
+                JSONArray arr=new JSONArray();
+                for(FragmentMain.ItemData item: main.fragmentMain.data_list)
+                {
+                    try {
+                        JSONObject obj = new JSONObject();
+                        obj.put("username", item.name);
+                        obj.put("password", item.pass);
+                        obj.put("title", item.site);
+                        arr.put(obj);
+                    }
+                    catch (Exception e)
+                    {
+                        Client.ShowError(e);
+                    }
+
+                }
+                final String data=Client.encode(arr.toString());
+                AsyncTask<Void,Void,Boolean> task=new AsyncTask<Void, Void, Boolean>() {
+                    @Override
+                    protected Boolean doInBackground(Void... voids) {
+                        String response= Client.sendGet(Client.URL+"updateaccounts/?username=" +
+                                Client.encode(LoginActivity.mName)+"&accounts="+ data);
+                        try {
+                            JSONObject retobj=new JSONObject(response);
+                            if(retobj.has("success") && retobj.getInt("success")==1 )
+                            {
+                                toast("Upload Done!",Toast.LENGTH_SHORT);
+                            }
+                            else
+                            {
+                                toast("Upload Failed!",Toast.LENGTH_SHORT);
+                            }
+                        } catch (JSONException e) {
+                            Client.ShowError(e);
+                        }
+
+                        return null;
+                    }
+                };
+                task.execute();
+
             }
         });
         return view;

@@ -3,11 +3,17 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView2"
+    <Button
+        android:id="@+id/but_push"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Setting" />
+        android:text="Push to Cloud" />
+
+    <Button
+        android:id="@+id/but_pull"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pull from Cloud" />
 
     <Button
         android:id="@+id/but_logout"
