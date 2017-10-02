@@ -52,6 +52,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public static String mName="";
     public static String mPass="";
     public static String mJSON=null;
+    public static boolean mFirsttime=false;
     /**
      * Id to identity READ_CONTACTS permission request.
      */

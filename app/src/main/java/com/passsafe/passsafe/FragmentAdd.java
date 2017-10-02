@@ -1,5 +1,6 @@
 package com.passsafe.passsafe;
 
+import android.content.Context;
 import android.hardware.SensorManager;
 import android.support.v4.app.Fragment;
 
@@ -18,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -133,6 +135,18 @@ public class FragmentAdd extends Fragment {
                 mact.SwitchToMain();
             }
         });
+        View.OnFocusChangeListener listener= new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(!b) {
+                    InputMethodManager im = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    im.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }
+        };
+        editSite.setOnFocusChangeListener(listener);
+        editName.setOnFocusChangeListener(listener);
+        editPass.setOnFocusChangeListener(listener);
         editPass.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
