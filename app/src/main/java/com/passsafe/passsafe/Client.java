@@ -16,7 +16,7 @@ import java.io.PrintWriter;
 
 public class Client {
     private static final String USER_AGENT = "Mozilla/5.0";
-    static final String URL="http://10.9.129.123:8000/pwdmanager/";
+    static final String URL="http://pwdmanager.australiasoutheast.cloudapp.azure.com/pwdmanager/";
     static String sendPost(String url,String urlParameters) {
         try {
             URL obj = new URL(url);
