@@ -27,7 +27,8 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class FragmentSetting extends Fragment {
 
-
+    //make a toast notification on the main thread
+    //len - the toast time length
     void toast(final String str,final int len)
     {
         getActivity().runOnUiThread(new Runnable() {
@@ -46,14 +47,18 @@ public class FragmentSetting extends Fragment {
         butlogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //On log out
                 Log.d("PASS","HAHAHAHA");
+                //First clear the local data
                 SharedPreferences.Editor editor = getActivity().getSharedPreferences("Login",MODE_PRIVATE).edit();
                 editor.putString("name","");
                 editor.putString("pass","");
                 editor.putBoolean("haspic",false);
                 editor.commit();
                 MainActivity main=(MainActivity)getActivity();
+                //drop the local DB
                 main.fragmentMain.drop();
+                //goto LoginActivity
                 Intent intent = new Intent(getActivity(), LoginActivity.class);
                 startActivity(intent);
             }
@@ -66,9 +71,11 @@ public class FragmentSetting extends Fragment {
                 AsyncTask<Void,Void,Boolean> task=new AsyncTask<Void, Void, Boolean>() {
                     @Override
                     protected Boolean doInBackground(Void... voids) {
+                        //get data from server
                         String response= Client.sendGet(Client.URL+"accounts/?username=" +
                                 Client.encode(LoginActivity.mName));
                         MainActivity main=(MainActivity)getActivity();
+                        //if data not empty, update local DB and refresh
                         if(response!=null)
                             main.fragmentMain.batchupdate(response);
                         toast("Accounts fetched from Cloud.",Toast.LENGTH_SHORT);
@@ -85,6 +92,7 @@ public class FragmentSetting extends Fragment {
             @Override
             public void onClick(View view) {
                 MainActivity main=(MainActivity)getActivity();
+                //construct JSON from local DB data
                 JSONArray arr=new JSONArray();
                 for(FragmentMain.ItemData item: main.fragmentMain.data_list)
                 {
@@ -102,6 +110,7 @@ public class FragmentSetting extends Fragment {
 
                 }
                 final String data=Client.encode(arr.toString());
+                //send the encoded JSON to server
                 AsyncTask<Void,Void,Boolean> task=new AsyncTask<Void, Void, Boolean>() {
                     @Override
                     protected Boolean doInBackground(Void... voids) {

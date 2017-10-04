@@ -76,6 +76,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
 
+    //make a toast notification on the main thread
+    //len - the toast time length
     void toast(final String str,final int len)
     {
         runOnUiThread(new Runnable() {

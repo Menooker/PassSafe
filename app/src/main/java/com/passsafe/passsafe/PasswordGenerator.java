@@ -5,10 +5,12 @@ import java.security.SecureRandom;
  */
 
 public class PasswordGenerator {
+    //choose character from the string
     static String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~`!@#$%^&*()-_=+[{]}\\|;:\'\",<.>/?";
     static String RandomPassoword(int len)
     {
         StringBuilder builder=new StringBuilder();
+        //secure random number generator
         SecureRandom random = new SecureRandom();
         for(int i=0;i<len;i++)
         {

@@ -17,6 +17,8 @@ import java.io.PrintWriter;
 public class Client {
     private static final String USER_AGENT = "Mozilla/5.0";
     static final String URL="http://pwdmanager.australiasoutheast.cloudapp.azure.com/pwdmanager/";
+
+    //send POST to url, returns the response string
     static String sendPost(String url,String urlParameters) {
         try {
             URL obj = new URL(url);
@@ -82,6 +84,7 @@ public class Client {
         return null;
 
     }
+    //print the error to the logcat
     static void ShowError(Exception e)
     {
         StringWriter sw = new StringWriter();
@@ -90,6 +93,8 @@ public class Client {
         String sStackTrace = sw.toString();
         Log.d("PassSafe",sStackTrace);
     }
+
+    //encode the string for URL
     static String encode(String str)
     {
         try {

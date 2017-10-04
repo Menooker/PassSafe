@@ -40,6 +40,7 @@ public class FragmentMain extends Fragment {
     ListView listview;
     List<ItemData> data_list=new ArrayList<ItemData>();
     MyItemAdapter adapter;
+    //get the data from local DB, and push the data into data_list
     List<ItemData> output_data()
     {
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -59,6 +60,7 @@ public class FragmentMain extends Fragment {
         return lst;
     }
 
+    //put the data from JSON string to local db, and refresh the view
     void batchupdate(String json)
     {
         drop();
@@ -77,11 +79,14 @@ public class FragmentMain extends Fragment {
         }
     }
 
+    //drop the local DB
     void drop()
     {
         SQLiteDatabase db = helper.getWritableDatabase();
         db.delete("password",null,null);
     }
+
+    //check if an item is in the DB
     boolean exists(String _site,String _name,String _pass)
     {
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -94,12 +99,13 @@ public class FragmentMain extends Fragment {
         cursor.close();
         return ret;
     }
-
+    //delete an item
     void del(int id)
     {
         SQLiteDatabase db = helper.getWritableDatabase();
         db.delete("password","id= "+id,null);
     }
+    //insert an item to local DB
     void insert(String site, String name,String pass)
     {
         if(exists(site,name,pass))
@@ -111,7 +117,7 @@ public class FragmentMain extends Fragment {
         values.put("pass",pass);
         db.insert("password",null,values);
     }
-
+    //update an exsiting item in local DB
     void update(int id,String site, String name,String pass)
     {
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -122,7 +128,7 @@ public class FragmentMain extends Fragment {
         db.update("password",values,"id= "+id ,null);
     }
 
-
+    //the data for a line in the ListView
     public class ItemData {
         public String site, name, pass;
         public int id;
@@ -158,6 +164,7 @@ public class FragmentMain extends Fragment {
 
     }
 
+    //load data from local DB, and refresh the ListView
     void refresh()
     {
         output_data();
@@ -167,6 +174,7 @@ public class FragmentMain extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        //initialize the local DB
         helper = new MyDatabaseHelper(getActivity(),"password.db",null,1);
         helper.getWritableDatabase();
 
@@ -181,6 +189,7 @@ public class FragmentMain extends Fragment {
         butadd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //on the "add account" button clicked
                 MainActivity act=(MainActivity)getActivity();
                 act.SwitchToAdd();
             }
@@ -197,13 +206,17 @@ public class FragmentMain extends Fragment {
             long timestamp=0;
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //process the "Click" item
+                //if two clicks are within 300ms, we think it's a double click
 
+                //show the selected password
                 TextView tpass = (TextView) view.findViewById(R.id.txt_pass);
                 if(tpass.getText().equals(""))
                     tpass.setText(data_list.get(i).pass);
                 else
                     tpass.setText("");
                 long currenttime=System.currentTimeMillis();
+                //if it is a double click, we copy the password to clipboard
                 if(currenttime-timestamp<300)
                 {
                     Toast.makeText(getActivity().getApplicationContext(), "Password has been copied to clipboard!",
@@ -215,13 +228,16 @@ public class FragmentMain extends Fragment {
                 timestamp=currenttime;
             }
         });
+        //if it is the first time when we login, we have an initial batch of data, we put the data in the local DB
+        // and refresh the ListViews
         if(LoginActivity.mJSON!=null)
             batchupdate(LoginActivity.mJSON);
         return view;
     }
 
 
-
+    //a message box to confirm deleting, will delete the item after user click "yes"
+    //idx is the id of the data
     void DeleteMessageBox(String prompt,int idx)
     {
         final int i=idx;
