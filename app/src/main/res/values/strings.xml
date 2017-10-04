@@ -22,4 +22,9 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="progress_dialog_title">Please wait</string>
+
+    <string name="subscription_key">0372fae12d174c129e8c74e2c8ead21e</string>
+    <string name="endpoint">https://westcentralus.api.cognitive.microsoft.com/face/v1.0</string>
 </resources>
