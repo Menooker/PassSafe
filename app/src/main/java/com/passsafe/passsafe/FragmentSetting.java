@@ -71,7 +71,7 @@ public class FragmentSetting extends Fragment {
                         MainActivity main=(MainActivity)getActivity();
                         if(response!=null)
                             main.fragmentMain.batchupdate(response);
-
+                        toast("Accounts fetched from Cloud.",Toast.LENGTH_SHORT);
                         return null;
                     }
                 };
@@ -111,7 +111,7 @@ public class FragmentSetting extends Fragment {
                             JSONObject retobj=new JSONObject(response);
                             if(retobj.has("success") && retobj.getInt("success")==1 )
                             {
-                                toast("Upload Done!",Toast.LENGTH_SHORT);
+                                toast("Accounts pushed to Cloud.",Toast.LENGTH_SHORT);
                             }
                             else
                             {
