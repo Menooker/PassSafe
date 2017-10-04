@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     ViewPager mainPager;
     BottomNavigationView navigation;
     public FragmentMain fragmentMain;
+    //page container, contains three pages(fragment)
     public class MyPagerAdapter extends FragmentPagerAdapter {
         private List<Fragment> viewList;
 
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         mainPager = (ViewPager) findViewById(R.id.viewpager);
         LayoutInflater inflater = getLayoutInflater();
+        //add the pages(fragments)
         ArrayList<Fragment> viewList = new ArrayList<Fragment>();
         fragmentMain=new FragmentMain();
         viewList.add(fragmentMain);
@@ -92,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
+                //synchronize the page and the navigation bar
                 navigation.getMenu().getItem(position).setChecked(true);
             }
 
@@ -102,14 +105,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    //switch to the page "Add"
     public void SwitchToAdd()
     {
         navigation.getMenu().getItem(1).setChecked(true);
+        //synchronize the page and the navigation bar
         mainPager.setCurrentItem(1);
     }
+    //switch to the page "Home"
     public void SwitchToMain()
     {
         navigation.getMenu().getItem(0).setChecked(true);
+        //synchronize the page and the navigation bar
         mainPager.setCurrentItem(0);
     }
 }

@@ -62,6 +62,7 @@ public class FragmentAdd extends Fragment {
         return strengthPercentage;
     }
 
+    //the seneor processor for "shake it", it will trigger the password generation
     SensorEventListener listener= new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent sensorEvent) {
@@ -77,6 +78,7 @@ public class FragmentAdd extends Fragment {
                         .abs(z) > 17)) {
                     if(editPass!=null)
                     {
+                        //trigger the password generation
                         editPass.setText(PasswordGenerator.RandomPassoword(15));
                     }
                 }
@@ -92,10 +94,10 @@ public class FragmentAdd extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        //获取 SensorManager 负责管理传感器
+        //get the sensor manager
          mSensorManager = ((SensorManager) getActivity().getSystemService(SENSOR_SERVICE));
         if (mSensorManager != null) {
-            //获取加速度传感器
+            //get the sensor
             mSensorManager.registerListener(listener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
                     , SensorManager.SENSOR_DELAY_UI);
 
@@ -125,6 +127,8 @@ public class FragmentAdd extends Fragment {
         butadd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //code for the button "Add"
+                //insert to the local DB, then switch to the Main View
                 MainActivity mact=(MainActivity)getActivity();
                 mact.fragmentMain.insert(editSite.getText().toString(),editName.getText().toString(),editPass.getText().toString());
                 mact.fragmentMain.refresh();
@@ -138,6 +142,7 @@ public class FragmentAdd extends Fragment {
         View.OnFocusChangeListener listener= new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
+                //hide the keyboard when focus lost
                 if(!b) {
                     InputMethodManager im = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                     im.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
@@ -160,6 +165,7 @@ public class FragmentAdd extends Fragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
+                //update the password strength bar
                 int score=checkPasswordStrength(editable.toString());
                 barPass.setProgress(score);
             }

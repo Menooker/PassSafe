@@ -7,16 +7,19 @@
         android:id="@+id/txt_site"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="65px" />
+        android:textSize="65px"
+        android:paddingLeft="30px"/>
 
     <TextView
         android:id="@+id/txt_name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:paddingLeft="30px"/>
 
     <TextView
         android:id="@+id/txt_pass"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:paddingLeft="30px"/>
 
 </LinearLayout>
