@@ -150,7 +150,7 @@ public class FragmentMain extends Fragment {
             TextView tname = (TextView) view.findViewById(R.id.txt_name);
             TextView tpass = (TextView) view.findViewById(R.id.txt_pass);
             TextView tsite = (TextView) view.findViewById(R.id.txt_site);
-            tname.setText("User Name: "+data.name);
+            tname.setText("Username: "+data.name);
             //tpass.setText(data.pass);
             tsite.setText(data.site);
             return view;
