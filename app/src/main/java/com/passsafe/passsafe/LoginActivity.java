@@ -278,7 +278,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             else if(obj.has("error_message") )
                             {
                                 toast("Fail to sign up! " + obj.get("error_message"),Toast.LENGTH_LONG);
-
                             }
                             else
                             {
