@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -244,7 +245,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 attemptLogin();
             }
         });
-
+        mEmailSignInButton.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+                return false;
+            }
+        });
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
         Button buttest=(Button)findViewById(R.id.but_test_login);
@@ -418,15 +427,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         intent.putExtra("android.intent.extras.CAMERA_FACING", 1);
         if(intent.resolveActivity(getPackageManager()) != null) {
             // Save the photo taken to a temporary file.
-            File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            try {
-                File file = File.createTempFile("IMG_", ".jpg", storageDir);
-                mUriPhotoTaken = Uri.fromFile(file);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, mUriPhotoTaken);
+                File tempFile = new File(getCacheDir(), "temp.jpg");
+                Uri imageUri = FileProvider.getUriForFile(this, "com.passsafe.passsafe.fileProvider", tempFile);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                //File file = File.createTempFile("IMG_", ".jpg", storageDir);
+                //mUriPhotoTaken = Uri.fromFile(file);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
                 startActivityForResult(intent,TAKE_PHOTO_REQUEST_CODE);
-            } catch (IOException e) {
-                Log.v("error = ", e.getMessage());
-            }
+
         }
     }
 
