@@ -9,8 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -304,6 +306,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mEmailView.setText(mName);
         }
 
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle(getString(R.string.progress_dialog_title));
 
@@ -427,13 +432,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         intent.putExtra("android.intent.extras.CAMERA_FACING", 1);
         if(intent.resolveActivity(getPackageManager()) != null) {
             // Save the photo taken to a temporary file.
-                File tempFile = new File(getCacheDir(), "temp.jpg");
-                Uri imageUri = FileProvider.getUriForFile(this, "com.passsafe.passsafe.fileProvider", tempFile);
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                //File file = File.createTempFile("IMG_", ".jpg", storageDir);
-                //mUriPhotoTaken = Uri.fromFile(file);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                startActivityForResult(intent,TAKE_PHOTO_REQUEST_CODE);
+            File tempFile = new File(getCacheDir(), "temp.jpg");
+            tempFile.delete();
+            try {
+                tempFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Uri imageUri = FileProvider.getUriForFile(this, "com.passsafe.passsafe.fileProvider", tempFile);
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+            for (ResolveInfo resolveInfo : resInfoList) {
+                String packageName = resolveInfo.activityInfo.packageName;
+                grantUriPermission(packageName, imageUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            }
+
+            //File file = File.createTempFile("IMG_", ".jpg", storageDir);
+            mUriPhotoTaken = Uri.fromFile(tempFile);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            startActivityForResult(intent, TAKE_PHOTO_REQUEST_CODE);
 
         }
     }
@@ -469,7 +487,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     Bitmap bitmap = ImageHelper.loadSizeLimitedBitmapFromUri(imageUri, getContentResolver());
                     if (bitmap != null) {
                         // Start detecting in image.
+                        Log.d("PassSafe","IMG OK"+imageUri.getPath());
                         detect(bitmap, hasPhoto ? 1 : 0);
+                    }
+                    else
+                    {
+                        Log.d("PassSafe","IMG ERR"+imageUri.getPath());
                     }
                 }
                 break;
