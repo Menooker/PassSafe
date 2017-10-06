@@ -197,7 +197,7 @@ public class FaceActivity extends AppCompatActivity {
             Log.v("verify result = ", verificationResult);
 
             if (result.isIdentical) {
-                Toast.makeText(getApplicationContext(), "verify successfully",
+                Toast.makeText(getApplicationContext(), "Verify successfully",
                         Toast.LENGTH_LONG).show();
 
                 Intent intent = new Intent(FaceActivity.this, MainActivity.class);
@@ -268,6 +268,7 @@ public class FaceActivity extends AppCompatActivity {
     private void takePhoto()
     {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra("android.intent.extras.CAMERA_FACING", 1);
         if(intent.resolveActivity(getPackageManager()) != null) {
             // Save the photo taken to a temporary file.
             File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -324,7 +325,7 @@ public class FaceActivity extends AppCompatActivity {
 
     // Save faceid
     private void saveFaceid(UUID faceid){
-        SharedPreferences mSharedPreferences = getSharedPreferences("SaveFace", MODE_PRIVATE);
+        SharedPreferences mSharedPreferences = getSharedPreferences("Login", MODE_PRIVATE);
         SharedPreferences.Editor mEditor = mSharedPreferences.edit();
         mEditor.putString("faceid", faceid.toString());
         mEditor.commit();
@@ -332,7 +333,7 @@ public class FaceActivity extends AppCompatActivity {
 
     // Get faceid
     private UUID getFaceid() {
-        SharedPreferences mSharedPreferences = getSharedPreferences("SaveFace", MODE_PRIVATE);
+        SharedPreferences mSharedPreferences = getSharedPreferences("Login", MODE_PRIVATE);
         SharedPreferences.Editor mEditor = mSharedPreferences.edit();
         String faceid = mSharedPreferences.getString("faceid", "0");
 

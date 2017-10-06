@@ -53,7 +53,7 @@ public class FragmentSetting extends Fragment {
                 SharedPreferences.Editor editor = getActivity().getSharedPreferences("Login",MODE_PRIVATE).edit();
                 editor.putString("name","");
                 editor.putString("pass","");
-                editor.putBoolean("haspic",false);
+                editor.putString("faceid", "0");
                 editor.commit();
                 MainActivity main=(MainActivity)getActivity();
                 //drop the local DB

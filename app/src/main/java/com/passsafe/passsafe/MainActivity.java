@@ -1,5 +1,6 @@
 package com.passsafe.passsafe;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -96,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 //synchronize the page and the navigation bar
                 navigation.getMenu().getItem(position).setChecked(true);
+                hidekeyboard();
             }
 
             @Override
@@ -106,6 +109,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    void hidekeyboard()
+    {
+        InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        im.hideSoftInputFromWindow(mainPager.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
     //switch to the page "Add"
     public void SwitchToAdd()
     {

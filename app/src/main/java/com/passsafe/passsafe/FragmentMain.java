@@ -185,7 +185,7 @@ public class FragmentMain extends Fragment {
         listview.setAdapter(adapter);
         refresh();
 
-        Button butadd=(Button)view.findViewById(R.id.but_add);
+        /*Button butadd=(Button)view.findViewById(R.id.but_add);
         butadd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -193,7 +193,7 @@ public class FragmentMain extends Fragment {
                 MainActivity act=(MainActivity)getActivity();
                 act.SwitchToAdd();
             }
-        });
+        });*/
 
         listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override

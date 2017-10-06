@@ -27,6 +27,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.widget.Toast;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.content.Context.SENSOR_SERVICE;
@@ -129,14 +130,22 @@ public class FragmentAdd extends Fragment {
             public void onClick(View view) {
                 //code for the button "Add"
                 //insert to the local DB, then switch to the Main View
-                MainActivity mact=(MainActivity)getActivity();
-                mact.fragmentMain.insert(editSite.getText().toString(),editName.getText().toString(),editPass.getText().toString());
-                mact.fragmentMain.refresh();
-                char[] empty=new char[0];
-                editSite.setText(empty,0,0);
-                editName.setText(empty,0,0);
-                editPass.setText(empty,0,0);
-                mact.SwitchToMain();
+                if(!editSite.getText().toString().equals("") &&
+                        !editName.getText().toString().equals("") &&
+                        !editPass.getText().toString().equals("")) {
+                    MainActivity mact = (MainActivity) getActivity();
+                    mact.fragmentMain.insert(editSite.getText().toString(), editName.getText().toString(), editPass.getText().toString());
+                    mact.fragmentMain.refresh();
+                    char[] empty = new char[0];
+                    editSite.setText(empty, 0, 0);
+                    editName.setText(empty, 0, 0);
+                    editPass.setText(empty, 0, 0);
+                    mact.SwitchToMain();
+                }
+                else
+                {
+                    Toast.makeText(getContext(),"Site name, username and password cannot be empty!",Toast.LENGTH_SHORT).show();
+                }
             }
         });
         View.OnFocusChangeListener listener= new View.OnFocusChangeListener() {
