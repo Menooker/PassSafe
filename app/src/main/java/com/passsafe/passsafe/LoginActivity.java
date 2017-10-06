@@ -273,7 +273,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             JSONObject obj = new JSONObject(ret);
                             if(obj.has("success") && obj.getInt("success")==1 )
                             {
-                                    toast("Sign up OK!",Toast.LENGTH_SHORT);
+                                toast("Sign up OK!",Toast.LENGTH_SHORT);
                             }
                             else if(obj.has("error_message") )
                             {

@@ -91,7 +91,7 @@ public class FragmentSetting extends Fragment {
         butpush.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MainActivity main=(MainActivity)getActivity();
+                final MainActivity main=(MainActivity)getActivity();
                 //construct JSON from local DB data
                 JSONArray arr=new JSONArray();
                 for(FragmentMain.ItemData item: main.fragmentMain.data_list)
@@ -129,7 +129,6 @@ public class FragmentSetting extends Fragment {
                         } catch (JSONException e) {
                             Client.ShowError(e);
                         }
-
                         return null;
                     }
                 };

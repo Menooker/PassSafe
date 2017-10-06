@@ -232,8 +232,10 @@ public class FragmentMain extends Fragment {
         });
         //if it is the first time when we login, we have an initial batch of data, we put the data in the local DB
         // and refresh the ListViews
-        if(LoginActivity.mJSON!=null)
+        if(LoginActivity.mJSON!=null) {
             batchupdate(LoginActivity.mJSON);
+            LoginActivity.mJSON=null;
+        }
         return view;
     }
 
